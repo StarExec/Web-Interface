@@ -1,4 +1,5 @@
 PDF:
+	pdflatex -draft WebInterface.tex
 	pdflatex WebInterface.tex
 
 clean:

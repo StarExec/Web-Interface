@@ -4,7 +4,7 @@
 Except for noted exceptions, URLs documented in the functions below are suffixes of the following URL, which points to the secure resources of Starexec.
 \\\url{https://www.starexec.org/starexec/secure/}\\
 
-The largest exception to this is that all URLs that begin with ?services? do not have the ?secure? prefix. So, any URL that begins with services/ is a suffix of the following URL.
+The largest exception to this is that all URLs that begin with ``services'' do not have the ``secure'' prefix. So, any URL that begins with services/ is a suffix of the following URL.
 \\\url{https://www.starexec.org/starexec/}\\
 
 Other exceptions are noted where applicable in the function documentation.
@@ -14,7 +14,7 @@ Other exceptions are noted where applicable in the function documentation.
 
 To be able to access Starexec resources, you will need to log into Starexec and maintain a secure channel. Logging in is a multistep protocol, with 3 main steps. First, authorization works on a challenge-based system, which means you cannot log in until you request a secure resource. Next, you must provide your username and password, and finally, you will access a secure resource.
 
-\subsection{First Step -- Requesting a Secure Resource}
+\subsection*{First Step -- Requesting a Secure Resource}
 
 \begin{description}
 \item [URL] \relurl{index.jsp}
@@ -28,7 +28,7 @@ To be able to access Starexec resources, you will need to log into Starexec and 
 	\end{description}
 \end{description}
 
-\subsection{Second Step -- Providing Login Credentials}
+\subsection*{Second Step -- Providing Login Credentials}
 
 \begin{description}
 \item [URL] \relurl{j\_security\_check}
@@ -45,7 +45,7 @@ To be able to access Starexec resources, you will need to log into Starexec and 
 \item [Returns] A jSON string containing a status object
 \end{description}
 
-\subsection{Third Step -- Accessing Secure Resources}
+\subsection*{Third Step -- Accessing Secure Resources}
 
 \begin{description}
 \item [URL] \relurl{index.jsp}
@@ -62,9 +62,9 @@ To be able to access Starexec resources, you will need to log into Starexec and 
 After you have logged in, you must maintain a session for as long as you want to make requests to the secure resources of Starexec. To maintain a session, your HTTP requests should have the following header keys with the appropriate values.
 
 \begin{description}
-\item [Cookie] \type{String} Should contain a string of the form ``killmenothing; JSESSIONID=" + your JSESSIONID obtained when logging in.
-\item [Connection] \type{String} Should be ``keep-alive"
-\item [Accept-Language] \type{String} Should be ``en-US,en;q=0.5"
+\item [Cookie] \type{String} Should contain a string of the form ``killmenothing; JSESSIONID='' + your JSESSIONID obtained when logging in.
+\item [Connection] \type{String} Should be ``keep-alive''
+\item [Accept-Language] \type{String} Should be ``en-US,en;q=0.5''
 \end{description}
 
 \section{Permissions}

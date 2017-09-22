@@ -1,1 +1,82 @@
 \chapter{Job Pairs}
+
+
+\section{Download Single Job Pair Output}
+\begin{description}
+\item [URL] \relurl{download}
+\item [Method] GET
+\item [Parameter Encoding] URL Encoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be “jp\_output”
+	\item [id] \type{Integer} The ID of the job pair.
+	\end{description}
+\item [Description] Makes a request to download an archive containing the output of the given job pair.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{Download Multiple Job Pair Outputs}
+\begin{description}
+\item [URL] \relurl{download}
+\item [Method] GET
+\item [Parameter Encoding] URL Encoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be “jp\_outputs”
+	\item [{id[]}] \type{Integer List} The IDs of all the job pairs to get output of.
+	\end{description}
+\item [Description] Makes a request to download an archive containing the output files for all of the given job pairs.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{Rerun Single Job Pair}
+\begin{description}
+\item [URL] \servicesurl{services/jobs/pairs/rerun/\{pairid\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [pairid] \type{Integer} The ID of the job pair that needs to be rerun
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Reruns the given job pair
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{View Job Pair Output}
+\begin{description}
+\item [URL] \servicesurl{services/jobs/pairs/\{id\}/stdout/\{stageNumber\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the job pair to get the output of
+	\item [stageNumber] \type{Integer} Which stage number of the pair to get the results of. If the pair was not created with a solver pipeline, then this should be 1. If it was created with a solver pipeline, then it is the relevant stage number to retrieve.
+	\end{description}
+\item [Method] GET
+\item [Parameter Encoding] N/A
+\item [Description] Retrieves the job pair output of a single stage of the given job pair
+\item [Returns] A plaintext string containing the output of the given pair. Returns “not available” if the output could not be found or if you do not have permission to view the given pair.
+\end{description}
+
+
+\section{View Job Pair Log}
+\begin{description}
+\item [URL] \servicesurl{services/jobs/pairs/\{id\}/log}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the job pair to get the log of
+	\end{description}
+\item [Method] GET
+\item [Parameter Encoding] N/A
+\item [Description] Retrieves the job pair log of the single job pair given.
+\item [Returns] A plaintext string containing the job pair log of the given pair. Returns “not available” if the log could not be found or if you do not have permission to view the log of the given pair.
+\end{description}

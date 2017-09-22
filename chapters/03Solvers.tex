@@ -1,1 +1,291 @@
 \chapter{Solvers}
+
+\section{Upload Solver Archive}
+\begin{description}
+\item [URL] \relurl{upload/solvers}
+\item [Method] POST
+\item [Parameter Encoding] multipart/form-data
+\item [Parameters] \
+	\begin{description}
+	\item [space] \type{Integer} The ID of the space to upload the solver to.
+	\item [sn] \type{String} The name to give the solver.
+	\item [descMethod] \type{String} Describes the method that the solver description is being uploaded. Can be “text”, “file”, or “upload”. If “text” is used, then the string “desc” parameter should provide the description. If “file” is used, then the file object parameter “d” should be a text file containing the description. If “upload”, then the description will be taken from the uploaded archive.
+	\item [desc] \type{String} The string description for the solver. Applies only if descMethod is “text”.
+	\item [upMethod] \type{String} Can be “local” or “URL”. If URL, means benchmarks are being uploaded from a URL. Otherwise, means a file is being uploaded directly.
+	\item [f] \type{File} If a file is being uploaded, this is the file object.
+	\item [url] \type{String}  If the upload is from a URL, gives the URL pointing to the solver archive.
+	\item [dlable] \type{Boolean} True if the solver should be downloadable and false otherwise.
+	\item [runTestJob] \type{Boolean} Whether to immediately start a new job using this solver as a test. Defaults to false.
+	\item [setting] \type{Integer} The ID of a setting profile to use for the test job creation. Applies only if runTestJob is true.
+	\item [type] \type{Integer} The type to give the new solver. See the help page documentation on solvers to see the solver type codes.
+	\end{description}
+\item [Description] Uploads a new solver. Also optionally creates a test job for the solver, which is a job with one job pair per configuration in the new solver. Test jobs are created using parameters from an existing settings profile.
+\item [Returns] An HTTP redirect to the spaces page on success, and an HTTP message with an error status on failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} On success, contains the upload ID for this archive upload.
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+\section{Upload Configuration}
+\begin{description}
+\item [URL] \relurl{upload/jobXML}
+\item [Method] POST
+\item [Parameter Encoding] multipart/form-data
+\item [Parameters] \
+	\begin{description}
+	\item [solverId] \type{Integer} The ID of the solver to attach this configuration to.
+	\item [file] \type{File} The file containing the configuration.
+	\item [uploadConfigName] \type{String} The name to give to the configuration.
+	\item [uploadConfigDesc] \type{String} The deescription to give to the configuration.
+	\end{description}
+\item [Description] Uploads a new configuration file to an existing solver.
+\item [Returns] An HTTP redirect to the solver details page on success, and an HTTP message with an error status on failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} On success, contains the ID of the new configuration.
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+\section{Add Configuration}
+\begin{description}
+\item [URL] \relurl{save/configurations}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [solverId] \type{Integer} The ID of the solver to attach this configuration to.
+	\item [saveConfigContents] \type{String} The new configuration as a string.
+	\item [saveConfigName] \type{String} The name to give to the configuration.
+	\item [saveConfigDesc] \type{String} The description to give to the configuration.
+	\end{description}
+\item [Description] Adds a new configuration to an existing solver.
+\item [Returns] An HTTP redirect to the solver details page on success, and an HTTP message with an error status on failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} On success, contains the ID of the new configuration.
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+\section{Download Solver}
+\begin{description}
+\item [URL] \relurl{download}
+\item [Method] GET
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be “solver”
+	\item [id] \type{Integer} The ID of the solver to download.
+	\item [reupload] \type{Boolean} If true, solver will be downloaded in the format required for an upload to Starexec. Defaults to false.
+	\end{description}
+\item [Description] Makes a request to download an archive containing the given solver.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+\section{Get Build Standard Output}
+\begin{description}
+\item [URL] \servicesurl{services/solvers/\{id\}/buildoutput}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the solver to get the build output for
+	\end{description}
+\item [Method] GET
+\item [Parameter Encoding] multipart/form-data
+\item [Description] Retrieves the standard output of the build script used when the solver was uploaded
+\item [Returns] A plaintext string containing the standard output of the build script. Returns “not available” if no build script was used for this solver, if the output could not be found, or if you do not have permission to view the build output.
+\end{description}
+
+\section{Linking / Copying Solvers to a Space}
+\begin{description}
+\item [URL] \servicesurl{services/spaces/\{spaceId\}/add/solver}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to put the solvers in
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of solver IDs to use
+	\item [copy] \type{Boolean} If true, deep copies of all the given solvers are made first, and then the new solvers are referenced in the given space. If false, solvers are simply referenced in the new space without being copied.
+	\item [copyToSubspaces] \type{Boolean} If true, solvers will be associated with every space in the hierarchy rooted at the given space. Otherwise, they will be associated only with the given space.
+	\item [fromSpace] \type{Integer} If not null, then this is the ID of a space containing all the solvers in selectedIds[] that you have permission to copy solvers out of. If null, so such space is used, and you must be the owner of the solvers to have permission to use them.
+	\end{description}
+\item [Description] Given a list of solvers, places the benchmarks into the given space. If copy is true, the benchmarks are first copied. Otherwise, the benchmarks are just linked into the new space.
+\item [Returns] A jSON string containing a status object.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} If the operation is a copy, this is a comma-separated list of the new solver IDs. Otherwise, this cookie is not present.
+	\end{description}
+\end{description}
+
+\section{Remove Solvers From Space}
+\begin{description}
+\item [URL] \servicesurl{services/remove/solver/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to remove solvers from
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of solver IDs to use
+	\item [hierarchy] \type{Boolean} If true, removes the given solvers from the entire space hierarchy. Otherwise, just removes them from the given space.
+	\end{description}
+\item [Description] Removes all of the given solvers from the given space or space hierarchy, depending on the value of the hierarchy parameter. Note that the solvers are not recycled or deleted by this function
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+\section{Simultaneously Recycle and Remove Solvers From a Space}
+\begin{description}
+\item [URL] \servicesurl{services/recycleandremove/solver/\{spaceID\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to remove solvers from
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of solver IDs to use
+	\end{description}
+\item [Description] Simultaneously recycles all of the given solvers and removes them from the given space.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Edit Solver}
+\begin{description}
+\item [URL] \servicesurl{services/edit/solver/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the solver to edit
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [name] \type{String} The new name to give the solver
+	\item [description] \type{String} The new description to give the solver
+	\item [downloadable] \type{Boolean} Whether other users should be able to download the solver
+	\end{description}
+\item [Description] Modifies the given solver, giving it a new name, description, and downloadable status.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Edit Configuration}
+\begin{description}
+\item [URL] \servicesurl{services/edit/configuration/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the configuration to edit
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [name] \type{String} The new name to give the configuration
+	\item [description] \type{String} The new description to give the configuration
+	\end{description}
+\item [Description] Modifies the given configuration, giving it a new name and description.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Recycle Solvers}
+\begin{description}
+\item [URL] \servicesurl{services/recycle/solver}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of solver IDs to use
+	\end{description}
+\item [Description] Recycles all of the given solvers. Note that the solvers will not be removed from any spaces they are currently associated with.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Recycle Orphaned Solvers}
+\begin{description}
+\item [URL] \servicesurl{services/recycleOrphaned/solver/\{userId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [userId] \type{Integer} Your user ID
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Recycles all “orphaned” solvers that you own
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Restore Solvers}
+\begin{description}
+\item [URL] \servicesurl{services/restore/solver}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of solver IDs to use
+	\end{description}
+\item [Description] Restores all of the given solvers, removing them from the recycle bin.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Restore Recycled Solvers}
+\begin{description}
+\item [URL] \servicesurl{services/restorerecycled/solvers}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Restores all the solvers in your recycle bin, removing them from the recycle bin.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Delete Solvers}
+\begin{description}
+\item [URL] \servicesurl{services/delete/solver}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of solver IDs to use
+	\end{description}
+\item [Description] Permanently deletes all of the given solvers on disk. Note that the solvers will not be removed from any spaces they are currently associated with.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Delete Recycled Solvers}
+\begin{description}
+\item [URL] \servicesurl{services/deleterecycled/solvers}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Permanently deletes all the solvers in your recycle bin.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Delete Configurations}
+\begin{description}
+\item [URL] \servicesurl{services/delete/configuration}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of configuration IDs to use
+	\end{description}
+\item [Description] Permanently deletes all of the given configurations on disk and removes them from their associated solvers.
+\item [Returns] A jSON string containing a status object.
+\end{description}

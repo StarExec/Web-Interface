@@ -1,1 +1,153 @@
 \chapter{Account}
+
+\section{Logout}
+\begin{description}
+\item [URL] \servicesurl{services/session/logout}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Logs the requesting user out of the system
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Request to Join Community}
+\begin{description}
+\item [URL] \relurl{add/to\_community/request}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [cm] \type{Integer} ID of the community (the space ID).
+	\item [msg] \type{String} Message explaining your motivation for joining the community.
+	\end{description}
+\item [Description] Sends a request to join a new community to the leaders of that community.
+\item [Returns] A redirect to a new webpage stating whether your message was sent.
+\item [Return Cookie] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{Edit Account Data}
+\begin{description}
+\item [URL] \servicesurl{services/edit/user/\{attr\}/\{userId\}/\{val\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [attr] \type{String} The type of attribute to update. Can be “firstname” “lastname” “institution”, “pagesize”
+	\item [userId] \type{Integer} Your user ID
+	\item [val] \type{String, Integer, depending on attr} The new value to set
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Updates a field of profile information (like first name, last name, and so on). Note that the “pagesize” attribute refers to the default number of rows that will be displayed in the data tables displayed on Starexec.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Change Password}
+\begin{description}
+\item [URL] \servicesurl{services/edit/user/password/\{userId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [userId] \type{Integer} Your user ID
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [current] \type{String} Your current password.
+	\item [newPass] \type{String} The new password you want.
+	\item [Confirm] \type{String} The new password you want, repeated for security
+	\end{description}
+\item [Description] Changes the password you use to log into Starexec
+\item [Returns] A jSON string containing a status object.
+\item [Return Cookie] \
+	\begin{description}
+	\item [JSESSIONID] \type{String} The session ID for the log in. Note that you will need to include this unique key for all transmissions to the secure parts of Starexec.
+	\end{description}
+\end{description}
+
+
+\section{Get User ID}
+\begin{description}
+\item [URL] \servicesurl{services/users/getid}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Retrieves your user ID.
+\item [Returns] A jSON string containing your user ID.
+\end{description}
+
+
+\section{Create or Modify Default Settings Profile}
+\begin{description}
+\item [URL] \relurl{add/profile}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [postp] \type{Integer} The ID of the post processor to use in the settings. -1 to indicate none.
+	\item [prep] \type{Integer} The ID of the pre processor to use in the settings. -1 to indicate none.
+	\item [benchp] \type{Integer} The ID of the benchmark processor to use in the settings. -1 to indicate none.
+	\item [solver] \type{Integer} The ID of the solver to use in the settings. -1 to indicate none.
+	\item [bench] \type{Integer} The ID of the benchmark to use in the settings. -1 to indicate none.
+	\item [cpu] \type{Integer} The cpu timeout for the profile.
+	\item [wall] \type{Integer} the wallclock timeout for the profile.
+	\item [mem] \type{Float} The maximum memory for the profile, in gigabytes.
+	\item [dep] \type{Boolean} Whether to enable dependencies by default in the profile
+	\item [+] exactly 1 of the following two parameters
+		\begin{description}
+		\item [name] \type{String} The name of the new setting profile. Use to create a new profile.
+		\item [settingId] \type{Integer} The ID of an existing settings profile that you own. Use to modify the profile with new values.
+		\end{description}
+	\end{description}
+\item [Description] Given a set of settings for a profile, either creates a new profile with those settings (if name is given) or modifies an existing profile with new values (if settingId is given).
+\item [Returns] An HTTP message with 200 status on success, and an HTTP message with an error status on failure.
+\end{description}
+
+
+\section{Set Default Settings Profile}
+\begin{description}
+\item [URL] \servicesurl{services/set/defaultSettings/\{id\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the settings profile to use
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Sets the given settings profile as your default profile, meaning the one that is loaded automatically upon visiting pages like the job creation page.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Edit Default Settings Profile}
+\begin{description}
+\item [URL] \servicesurl{services/edit/defaultSettings/\{attr\}/\{id\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the settings profile to edit
+	\item [attr] \type{String} The attribute to edit. Can be “PostProcess”, “BenchProcess”, “CpuTimeout”, “ClockTimeout”, “DependenciesEnabled”, “defaultbenchmark”, “defaultsolver”, “MaxMem”, “PreProcess”
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [val] \type{String or Int, depending on choice of \{attr\}} The new value to use for the given attribute
+	\end{description}
+\item [Description] Edits an existing settings profile by using the given new value for the given attribute
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Delete Default Settings Profile}
+\begin{description}
+\item [URL] \servicesurl{services/delete/defaultSettings/\{id\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the settings profile to delete
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Deletes the settings profile with the given ID
+\item [Returns] A jSON string containing a status object.
+\end{description}

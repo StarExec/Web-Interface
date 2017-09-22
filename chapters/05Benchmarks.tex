@@ -1,1 +1,255 @@
 \chapter{Benchmarks}
+
+\section{Upload Benchmark Archive}
+\begin{description}
+\item [URL] \relurl{upload/benchmarks}
+\item [Method] POST
+\item [Parameter Encoding] multipart/form-data
+\item [Parameters] \
+	\begin{description}
+	\item [space] \type{Integer} The ID of the space to upload benchmarks to.
+	\item [localOrUrl] \type{String} Can be “local” or “URL”. If URL, means benchmarks are being uploaded from a URL. Otherwise, means a file is being uploaded directly.
+	\item [benchFile] \type{File} If a benchmark file is being uploaded, this is the file object.
+	\item [url] \type{String} If the upload is from a URL, gives the URL pointing to the benchmark archive.
+	\item [upMethod] \type{String} Can be either “convert” or “dump.” “Convert” means create a space hierarchy that mirrors the directory structure of the uploaded benchmarks, and “dump” means to simply dump all the benchmarks directly into the given space.
+	\item [benchType] \type{Integer} The ID of the benchmark processor that should be used to process the benchmarks.
+	\item [download] \type{Boolean} True if the benchmarks should be downloadable and false otherwise.
+	\item [dependency] \type{Boolean} True if these benchmarks have dependencies, and false otherwise.
+	\item [depRoot] \type{Integer} The ID of the space in which the benchmark dependencies are rooted, assuming dependency is true. Otherwise not necessary.
+	\item [linked] \type{Boolean} If dependency is true, then true if the first directory in path corresponds to dependent bench space.
+	\item [+ all permissions parameters except isLeader (see the permissions section)] Specifies the default permissions for new users being added to the space.
+	\end{description}
+\item [Description] Uploads a new archive of benchmarks.
+\item [Returns] An HTTP redirect to the upload status page on success, and an HTTP message with an error status on
+failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} On success, contains the upload ID for this archive upload.
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On error, this is the error message string.
+	\end{description}
+\end{description}
+
+
+\section{Getting Benchmark Upload Status}
+\begin{description}
+\item [URL] \servicesurl{services/benchmarks/uploadDescription/\{statusId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item[statusId] \type{Integer} The ID of the benchmark upload status object
+	\end{description}
+\item [Method] GET
+\item [Parameter Encoding] N/A
+\item [Description] Retrieves a string description of a benchmark archive upload.
+\item [Returns] A jSON string containing a status object. If the status is successful, the message contained in the status object will be the upload description.
+\end{description}
+
+
+\section{Download Benchmark}
+\begin{description}
+\item [URL] \relurl{download}
+\item [Method] GET
+\item [Parameter Encoding] URL Encoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be “bench”
+	\item [id] \type{Integer} The ID of the benchmark to download.
+	\end{description}
+\item [Description] Makes a request to download an archive containing the given benchmark.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{View Benchmark Contents}
+\begin{description}
+\item [URL] \servicesurl{services/benchmarks/\{id\}/contents}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the benchmark to get the contents of
+	\end{description}
+\item [Method] GET
+\item [Parameter Encoding] N/A
+\item [Description] Retrieves the file contents of a single benchmark.
+\item [Returns] A plaintext string containing the benchmark contents for the given benchmark. Returns “not available” if the benchmark could not be found or if you do not have permission to see the given benchmark
+\end{description}
+
+
+\section{Linking / Copying Benchmarks to a Space}
+\begin{description}
+\item [URL] \servicesurl{services/spaces/\{spaceId\}/add/benchmark}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to put the new benchmarks in
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of benchmark IDs to use
+	\item [copy] \type{Boolean} If true, benchmarks are first copied, and then the new benchmarks are referenced in the given space. If false, benchmarks are simply referenced in the new space without being copied.
+	\item [fromSpace] \type{integer} If not null, then this is the ID of a space containing all the benchmarks in selectedIds[] that you have permission to copy benchmarks out of. If null, so such space is used, and you must be the owner of the benchmarks to have permission to use them.
+	\end{description}
+\item [Description] Given a list of benchmarks, places the benchmarks into the given space. If copy is true, the benchmarks are first copied. Otherwise, the benchmarks are just linked into the new space.
+\item [Returns] A jSON string containing a status object.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} – If the operation is a copy, this is a comma-separated list of the new benchmark IDs. Otherwise, this cookie does not exist.
+	\end{description}
+\end{description}
+
+
+\section{Removing Benchmarks From a Space }
+\begin{description}
+\item [URL] \servicesurl{services/remove/benchmark/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to remove benchmarks from
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of benchmark IDs to use
+	\end{description}
+\item [Description] Given a list of benchmarks and a space, removes all the given benchmarks from the given space. Note that this does not either recycle or delete any of the given benchmarks.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Simultaneously Recycle and Remove Benchmarks From a Space}
+\begin{description}
+\item [URL] \servicesurl{services/recycleandremove/benchmark/\{spaceID\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to remove benchmarks from
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of benchmark IDs to use
+	\end{description}
+\item [Description] Simultaneously recycles all of the given benchmarks and removes them from the given space.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Edit Benchmark}
+\begin{description}
+\item [URL] \servicesurl{services/edit/benchmark/\{id\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the benchmark to edit
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [name] \type{String} The new name to give the benchmark.
+	\item [description] \type{String} The new description to give the benchmark.
+	\item [downloadable] \type{Boolean} Whether other users should be able to download the benchmark
+	\item [type] \type{Integer} The ID of the benchmark processor to apply to the benchmark.
+	\end{description}
+\item [Description] Modifies the given benchmark, assigning it all the given attributes.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Reprocess Benchmarks in Space}
+\begin{description}
+\item [URL] \relurl{process/benchmarks}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [pid] \type{Integer} The ID of the benchmark processor to use
+	\item [sid] \type{Integer} The ID of the space to reprocess benchmarks in.
+	\item [hier] \type{Boolean} True to reprocess all the benchmarks in the hierarchy rooted at the given space, and false to do only the single given space.
+	\item [clear] \type{Boolean} True to delete all old benchmark attributes, and false to only delete old attributes when there is a key conflict with the new attributes being created.
+	\end{description}
+\item [Description] Runs a new benchmark processor on all benchmarks in the given space (or hierarchy). Benchmark types are changed to the new processor, and all new benchmark attributes are saved. Old attributes may be optionally deleted; however, if there are any name conflicts between old and new attributes (for example, like having two “starexec-expected-results” attributes), then the old version will be deleted in every case.
+\item [Returns] An HTTP redirect to the upload status page on success, and an HTTP message with an error status on failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{Recycle Benchmarks}
+\begin{description}
+\item [URL] \servicesurl{services/recycle/benchmark}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of benchmark IDs to use
+	\end{description}
+\item [Description] Recycles all of the given benchmarks. Note that the benchmarks will not be removed from any spaces they are currently associated with.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Recycle Orphaned Benchmarks}
+\begin{description}
+\item [URL] \servicesurl{services/recycleOrphaned/benchmark/\{userId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [userId] \type{Integer} Your user ID
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Recycles all “orphaned” benchmarks that you own.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Restore Benchmarks}
+\begin{description}
+\item [URL] \servicesurl{services/restore/benchmark}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of benchmark IDs to use
+	\end{description}
+\item [Description] Restores all of the given benchmarks, removing them from the recycle bin.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Restore All Recycled Benchmarks}
+\begin{description}
+\item [URL] \servicesurl{services/restorerecycled/benchmarks}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Restores all the benchmarks in your recycle bin, removing them from the recycle bin.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Delete Benchmarks}
+\begin{description}
+\item [URL] \servicesurl{services/delete/benchmark}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of benchmark IDs to use
+	\end{description}
+\item [Description] Permanently deletes all of the given benchmarks on disk. Note that the benchmarks will not be removed from any spaces they are currently associated with.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Delete Recycled Benchmarks}
+\begin{description}
+\item [URL] \servicesurl{services/deleterecycled/benchmarks}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Permanently deletes all the benchmarks in your recycle bin.
+\item [Returns] A jSON string containing a status object.
+\end{description}

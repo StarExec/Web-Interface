@@ -1,1 +1,77 @@
 \chapter{Processors}
+
+\section{Add Processor}
+\begin{description}
+\item [URL] \relurl{processors/manager}
+\item [Method] POST
+\item [Parameter Encoding] multipart/form-data
+\item [Parameters] \
+	\begin{description}
+	\item [name] \type{String} The new name to give the processor
+	\item [desc] \type{String} The new description to give the processor
+	\item [file] \type{File} The archive containing the processor
+	\item [com] \type{Integer} The ID of the community to put the solver in.
+	\item [action] \type{String} Should be “add” for a new processor
+	\item [type] \type{String} Describes the type of the processor. Should be “bench”, “pre”, “post”, or “update”. Description: Modifies the given processor, giving it a new name and description.
+	\end{description}
+\item [Description] Modifies the given processor, giving it a new name and description.
+\item [Returns] A jSON string containing a status object.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} On success, the ID given to the new processor.
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{Edit Processor}
+\begin{description}
+\item [URL] \servicesurl{services/edit/processor/\{procId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [procId] \type{Integer} The ID of the processor to edit
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [name] \type{String} The new name to give the processor
+	\item [desc] \type{String} The new description to give the processor
+	\end{description}
+\item [Description] Modifies the given processor, giving it a new name and description.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Download Processors of Class}
+\begin{description}
+\item [URL] \relurl{download}
+\item [Method] GET
+\item [Parameter Encoding] URL Encoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be “proc”
+	\item [id] \type{Integer} The ID of the community that owns the processors to download.
+	\item [procClass] \type{Integer} The type of processor to download. Can be “post”, “pre”, or “bench” to download post processors, pre processors, and benchmark processors respectively.
+	\end{description}
+\item [Description] Makes a request to download an archive containing every benchmark of the given type that the given community owns.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{Delete Processors}
+\begin{description}
+\item [URL] \servicesurl{services/delete/processor}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of processor IDs to delete
+	\end{description}
+\item [Description] Permanently deletes the given processors
+\item [Returns] a jSON string containing a status object.
+\end{description}

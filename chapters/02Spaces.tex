@@ -1,1 +1,199 @@
 \chapter{Spaces}
+
+\section{Add Space}
+\begin{description}
+\item [URL] \relurl{{add/space}}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [parent] \type{Integer} The ID of the parent space of this new space.
+	\item [name] \type{String} The new space name
+	\item [desc] \type{String} The new space description
+	\item [locked] \type{Boolean} Whether the space should be locked
+	\item [users] \type{Boolean} True to inherit all users from the parent space and false otherwise.
+	\item [sticky] \type{Boolean} Whether the new space should have sticky leaders set
+	\item [+ all permissions parameters except isLeader (see the permissions section)] Specifies the default permissions for new users being added to the space.
+	\end{description}
+\item [Description] Creates a new space using the given attributes.
+\item [Returns] An HTTP message with 200 status on success, and an HTTP message with an error status on failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} On success, contains the ID of the newly created space.
+	\item [STATUS\_MESSAGE\_STRING] \type{Integer} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+\section{Upload Space XML}
+\begin{description}
+\item [URL] \relurl{{upload/space}}
+\item [Method] POST
+\item [Parameter Encoding] multipart/form-data
+\item [Parameters] \
+	\begin{description}
+	\item [space] \type{Integer} The ID of the space to use as the parent space for the new upload
+	\item [f] \type{File} The archive file containing the space XML.
+	\end{description}
+\item [Description] Uploads a space XML file and creates new spaces based on the XML
+\item [Returns] An HTTP redirect to the upload status page on success, and an HTTP message with an error status on failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{Integer} On failure, contains an error message.
+    \end{description}
+\end{description}
+
+\section{Download Space}
+\begin{description}
+\item [URL] \relurl{{download}}
+\item [Method] GET
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be ``space''
+	\item [id] \type{Integer} The ID of the space to download.
+	\item [includesolvers] \type{Boolean} Whether to include solvers in the download.
+	\item [includebenchmarks] \type{Boolean} Whether to include benchmarks in the download.
+	\item [hierarchy] \type{Boolean} True to download the space hierarchy rooted at the given space, and false to download only the given space.
+	\end{description}
+\item [Description] Makes a request to download an archive containing a directory representation of a space or space hierarchy, optionally including all the solvers and benchmarks in the spaces.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{Integer} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+\section{Download Space XML}
+\begin{description}
+\item [URL] \relurl{{download}}
+\item [Method] GET
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be ``spaceXML''
+	\item [id] \type{Integer} The ID of the space to get the XML for.
+	\item [includeattrs] \type{Boolean} Whether to include benchmark attributes in the XML.
+	\item [updates] \type{Boolean} Whether to include benchmark update tags in the XML.
+	\item [upid] \type{Integer} The ID of the update processor to include for all the update tags. Applies only if updates is true.
+	\end{description}
+\item [Description] Makes a request to download an archive containing the XML representation of a space hierarchy.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{Integer} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+\section{Copy Spaces}
+\begin{description}
+\item [URL] \servicesurl{services/spaces/\{spaceId\}/copySpace}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space that you want to copy other spaces into
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [selectedIds] \type{Integer List} A list of space IDs, where each space will be copied into the destination space
+	\item [copyHierarchy] \type{Boolean} True to copy entire space hierarchies into the destination space. False to copy only the spaces in selectedIds without their hierarchies.
+	\end{description}
+\item [Description] Copies spaces into a single destination space. All benchmarks, solvers, and jobs will be linked into the newly created spaces.
+\item [Returns] A jSON string containing a status object.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} A comma-separated list of the new space IDs.
+	\end{description}
+\end{description}
+
+\section{Link all Orphaned Primitives to Space}
+\begin{description}
+\item [URL] \servicesurl{services/linkAllOrphaned/\{userId\}/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [userId] \type{Integer} Your user ID
+	\item [spaceId] \type{Integer} The ID of the space to place all of the orphaned primitives into.
+	\end{description}
+\item [Method] POST
+\item [Description] Links all “orphaned” solvers, benchmarks, and jobs that you own in the given space.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+\section{Edit Space Attributes}
+\begin{description}
+\item [URL] \servicesurl{services/edit/space/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to edit
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [name] \type{String} The new space name
+	\item [description] \type{String} The new space description
+	\item [locked] \type{Boolean} Whether the space should be locked
+	\item [sticky] \type{Boolean} Whether the new space should have sticky leaders set
+	\item [+ all permissions parameters except isLeader (see the permissions section)] Specifies the default permissions for new users being added to the space.
+	\end{description}
+\item [Description] Edits an existing space by providing a new values for all space attributes
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+\section{Edit Single Space Attribute}
+\begin{description}
+\item [URL] \servicesurl{services/edit/space/\{attr\}/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [attr] \type{String} The attribute to edit. Can be ``name'' or ``description''
+	\item [spaceId] \type{Integer} The ID of the space to edit
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [val] \type{String} The new value to use for the given attribute
+	\end{description}
+\item [Description] Edits an existing space by providing a new value for the given attribute
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+\section{View Space Visibility}
+\begin{description}
+\item [URL] \servicesurl{services/space/isSpacePublic/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to check visibility of.
+	\end{description}
+\item [Method] POST
+\item [Description] Checks whether the given space is public or private.
+\item [Returns] A jSON string containing 1 if the space is public and 0 otherwise.
+\end{description}
+
+\section{Edit Space Visibility}
+\begin{description}
+\item [URL] \servicesurl{services/space/changePublic/\{spaceId\}/\{hierarchy\}/\{makePublic\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to edit.
+	\item [hierarchy] \type{Boolean} True to edit the entire space hierarchy and false to edit the single space.
+	\item [makePublic] \type{Boolean} True to make spaces public and false to make them private
+	\end{description}
+\item [Method] POST
+\item [Description] Sets the given space, and optionally the full space hierarchy rooted there, to either public or private.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+\section{Remove Spaces}
+\begin{description}
+\item [URL] \servicesurl{services/remove/subspace}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of space IDs to use
+	\item [recyclePrims] \type{Boolean} If true, all solvers and benchmarks located anywhere in any space hierarchy being removed will be recycled. Only solvers and benchmarks that you have permission to edit will be recycled.
+	\end{description}
+\item [Description] Removes all the given spaces, including their full space hierarchies.
+\item [Returns] A jSON string containing a status object.
+\end{description}

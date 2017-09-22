@@ -1,1 +1,34 @@
 \chapter{Websites}
+
+\section{Add a New Website}
+\begin{description}
+\item [URL] \servicesurl{services/website/add/\{type\}/\{id\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [type] \type{String} The type of primitive to add a website to. Can be “user”, “space”, or “solver”
+	\item [id] \type{Integer} The ID of the primitive to add a website too
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [name] \type{String} The name of the website
+	\item [url] \type{String} The URL to the website
+	\end{description}
+\item [Description] Associates the given website with the specified primitive
+\item [Returns] A jSON string containing a status object
+\end{description}
+
+
+\section{Delete a Website}
+\begin{description}
+\item [URL] \servicesurl{services/websites/delete/\{websiteId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [websiteId] \type{Integer} The ID of the website
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Deletes the website with the given ID
+\item [Returns] A jSON string containing a status object
+\end{description}

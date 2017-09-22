@@ -1,1 +1,90 @@
 \chapter{Users}
+
+\section{Add Users to Space}
+\begin{description}
+\item [URL] \servicesurl{services/spaces/{spaceId}/add/user}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the destination space for all the users
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of user IDs to use
+	\item [copyToSubspaces] \type{Boolean} Whether to copy the users to every space in the hierarchy rooted at the given space.
+	\end{description}
+\item [Description] Associates all of the given users with the given space
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Remove Users From Space}
+\begin{description}
+\item [URL] \servicesurl{services/remove/user/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to remove users from
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of user IDs to use
+	\item [hierarchy] \type{Boolean} If true, removes the given users from the entire space hierarchy. Otherwise, just removes them from the given space.
+	\end{description}
+\item [Description] Removes all of the given users from the given space or space hierarchy, depending on the value of the hierarchy parameter.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Leave Space}
+\begin{description}
+\item [URL] \servicesurl{services/leave/space/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to leave
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Removes you from the given space and all of its subspaces.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Edit User Permissions in a Space}
+\begin{description}
+\item [URL] \servicesurl{services/space/\{spaceId\}/edit/perm/\{userId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the relevant space
+	\item [userId] \type{Integer} The ID of the user to change permissions for
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [+ all permissions parameters except isLeader (see the permissions section)] Specifies the default permissions for new users being added to the space.
+	\end{description}
+\item [Description] Updates the permissions of the given user in a space.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Edit User Permissions in a Space Hierarchy}
+\begin{description}
+\item [URL] \servicesurl{services/space/\{spaceId\}/edit/perm/hier/\{userId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space that is at the root of the relevant hierarchy
+	\item [userId] \type{Integer} The ID of the user to change permissions for,
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [+ all permissions parameters except isLeader (see the permissions section)] Specifies the default permissions for new users being added to the space.
+	\end{description}
+\item [Description] Updates the permissions of the given user in a space hierarchy rooted at the given space.
+\item [Returns] A jSON string containing a status object.
+\end{description}

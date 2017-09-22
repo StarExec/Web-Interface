@@ -1,1 +1,333 @@
 \chapter{Jobs}
+
+\section{Create Job}
+\begin{description}
+\item [URL] \relurl{add/job}
+\item [Method] POST
+\item [Parameter Encoding] multipart/form-data
+\item [Parameters] \
+	\begin{description}
+	\item [name] \type{String} The name to give the job
+	\item [desc] \type{String} The description to give the job.
+	\item [preProcess] \type{Integer} The ID of the pre processor to use. Can be excluded.
+	\item [seed] \type{Integer} A number that will be passed into the pre processor for every pair.
+	\item [postProcess] \type{Integer} The ID of the post processor to use. Can be excluded.
+	\item [queue] \type{Integer} The ID of the queue to run the job on.
+	\item [spaceId] \type{Integer} The ID of the space to put the job in.
+	\item [cpuTimeout] \type{Integer} The CPU timeout, in seconds, to enforce.
+	\item [wallclockTimeout] \type{Integer} The wallclock timeout, in seconds, to enforce.
+	\item [maxMem] \type{Float} The maximum memory limit, in gigabytes.
+	\item [pause] \type{Boolean} If true, job will start out paused. If false, job will start upon creation.
+	\item [runChoice] \type{String} Controls how job pairs are created, and can be either “keepHierarchy” or “choose”. In “keepHierarchy”, a job is run using all benchmarks that are in the space hierarchy rooted at the spot that the job was created, and every benchmark is executed by every solver configuration of every solver in the same space. In “quickJob,” a single job pair is created, using the given solver and the given text to use as a new benchmark. In “choose”, a list of configurations is provided to use in the job.
+	\item [configs] \type{Integer} – The list of configurations to use in the job. Only applies if runChoice is “choose”
+	\item [benchChoice] \type{String} Only applies if runChoice is “choose”. Describes how to select benchmarks for the job. Must be one of “runAllBenchInSpace”, “runAllBenchInHierarchy”, “runChosenFromSpace”. If “runAllBenchInSpace”, all benchmarks in the space the job is being uploaded to will be used. If "runAllBenchInHierarchy", all benchmarks in the entire hierarchy will be used. If "runChosenFromSpace", then benchmarks must be provided.
+	\item [bench] \type{Integer List} The list of benchmarks to use in the job. Only applies if benchChoice is "runChosenFromSpace".
+	\item [traversal] \type{String} Controls the order in which job pairs are executed. Can be either “depth” or “robin.” With “depth,” all the job pairs in a single space will be executed before moving onto another space. With “robin,” each space in the job will have a single pair executed before any space has a second pair executed, and so on.
+	\end{description}
+\item [Description] Creates a new job with the given parameters.
+\item [Returns] An HTTP redirect to the spaces page on success, and an HTTP message with an error code and error message on failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} On success, contains the ID of the new job.
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{Create Quick Job}
+\begin{description}
+\item [URL] \relurl{add/job}
+\item [Method] POST
+\item [Parameter Encoding] multipart/form-data
+\item [Parameters] \
+	\begin{description}
+	\item [name] \type{String} The name to give the job
+	\item [desc] \type{String} The description to give the job.
+	\item [preProcess] \type{Integer} The ID of the pre processor to use. Can be excluded.
+	\item [seed] \type{Integer} A number that will be passed into the pre processor for every pair.
+	\item [postProcess] \type{Integer} The ID of the post processor to use. Can be excluded.
+	\item [queue] \type{Integer} The ID of the queue to run the job on.
+	\item [spaceId] \type{Integer} The ID of the space to put the job in.
+	\item [cpuTimeout] \type{Integer} The CPU timeout, in seconds, to enforce.
+	\item [wallclockTimeout] \type{Integer} The wallclock timeout, in seconds, to enforce.
+	\item [maxMem] \type{Float} The maximum memory limit, in gigabytes.
+	\item [pause] \type{Boolean} If true, job will start out paused. If false, job will start upon creation.
+	\item [runChoice] \type{String} Should be “quickJob”
+	\item [bench] \type{String} The benchmark to use as a string.
+	\item [benchProcess] \type{Integer} The ID of the benchmark processor to process the new benchmark with.
+	\item [benchName] \type{String} The name to give the new benchmark.
+	\item [solver] \type{Integer} The ID of the solver to use.
+	\end{description}
+\item [Description] Creates a new quick job, which is a job that uses every configuration of a single solver on a new benchmark, which is provided as a string.
+\item [Returns] An HTTP redirect to the upload status page on success, and an HTTP message with an error status on failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer} On success, contains the ID of the new job.
+	\end{description}
+\end{description}
+
+
+\section{Upload Job XML}
+\begin{description}
+\item [URL] \relurl{upload/jobXML}
+\item [Method] POST
+\item [Parameter Encoding] multipart/form-data
+\item [Parameters] \
+	\begin{description}
+	\item [space] \type{Integer} The ID of the space to place the new jobs into.
+	\item [f] \type{File} The archive file containing the job XML.
+	\end{description}
+\item [Description] Uploads a job XML file and creates new jobs based on the XML.
+\item [Returns] An HTTP redirect to the space explorer on success, and an HTTP message with an error status on failure.
+\item [Return Cookies] \
+	\begin{description}
+	\item [New\_ID] \type{Integer List} A list of IDs representing the newly created jobs.
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{Linking Jobs in a New Space}
+\begin{description}
+\item [URL] \servicesurl{services/spaces/\{spaceId\}/add/job}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to put the jobs in
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of job IDs to use
+	\item [fromSpace] \type{integer} If not null, then this is the ID of a space containing all the jobs in selectedIds that you have permission to copy jobs out of. If null, so such space is used, and you must be the owner of the jobs to have permission to link them.
+	\end{description}
+\item [Description] Given a list of jobs, associates all the jobs with the given space.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Remove Jobs From Space}
+\begin{description}
+\item [URL] \servicesurl{services/remove/job/\{spaceId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to remove jobs from
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of job IDs to use
+	\end{description}
+\item [Description] Removes all of the given jobs from the given space.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Simultaneously Delete and Remove Jobs From a Space}
+\begin{description}
+\item [URL] \servicesurl{services/deleteandremove/job/\{spaceID\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [spaceId] \type{Integer} The ID of the space to remove jobs from
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of job IDs to use
+	\end{description}
+\item [Description] Simultaneously deletes all of the given jobs and removes them from the given space.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Download Job Output}
+\begin{description}
+\item [URL] \relurl{download}
+\item [Method] GET
+\item [Parameter Encoding] URL Encoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be “j\_outputs”
+	\item [id]  \type{Integer} The ID of the job.
+	\item [since] \type{Integer} A “completion number” that says to retrieve only job pairs with a completion number greater than the given one. Can be excluded to retrieve all pairs.
+	\end{description}
+\item [Description] Makes a request to download an archive containing the output files of all job pairs in this job, possibly with pairs that occurred before “since” excluded.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [Max-Completion] \type{Integer} If the parameter ‘since’ is included, this cookie contains the maximum completion ID found among all returned job pairs. Without ‘since’, this cookie is excluded.
+	\item [Older-Pairs] \type{Integer} If the parameter ‘since’ is included, this cookie contains the number of pairs that were excluded because they completed before the ID given by ‘since’. Without ‘since’, this cookie is excluded.
+	\item [Pairs-Found] \type{Integer} If the parameter ‘since’ is included, this cookie contains the number of pairs that are included. Without ‘since’, this cookie is excluded.
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\item [Total-Pairs] \type{Integer} If the parameter ‘since’ is included, this cookie contains the total number of pairs in the given job. Without ‘since’, this cookie is excluded.
+	\end{description}
+\end{description}
+
+
+\section{Download Job CSV}
+\begin{description}
+\item [URL] \relurl{download}
+\item [Method] GET
+\item [Parameter Encoding] URL Encoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be “job”
+	\item [id] \type{Integer} The ID of the job.
+	\item [since] \type{Integer} A “completion number” that says to retrieve only job pairs with a completion number greater than the given one. Can be excluded to retrieve all pairs.
+	\item [returnids] \type{Boolean} If true, the CSV will include solver, configuration, and benchmark IDs.
+	\item [getcompleted] \type{Boolean} If true, only completed job pairs will be included. Defaults to false.
+	\end{description}
+\item [Description] Makes a request to download an archive containing the CSV representation of the given job.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [Max-Completion] \type{Integer} If the parameter ‘since’ is included, this cookie contains the maximum completion ID found among all returned job pairs. Without ‘since’, this cookie is excluded.
+	\item [Older-Pairs] \type{Integer} If the parameter ‘since’ is included, this cookie contains the number of pairs that were excluded because they completed before the ID given by ‘since’. Without ‘since’, this cookie is excluded.
+	\item [Pairs-Found] \type{Integer} If the parameter ‘since’ is included, this cookie contains the number of pairs that are included. Without ‘since’, this cookie is excluded.
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\item [Total-Pairs] \type{Integer} If the parameter ‘since’ is included, this cookie contains the total number of pairs in the given job. Without ‘since’, this cookie is excluded.
+	\end{description}
+\end{description}
+
+
+\section{Download Job XML}
+\begin{description}
+\item [URL] \relurl{download}
+\item [Method] GET
+\item [Parameter Encoding] URL Encoded
+\item [Parameters] \
+	\begin{description}
+	\item [type] \type{String} Should be “jobXML”
+	\item [id] \type{Integer} The ID of the job.
+	\end{description}
+\item [Description] Makes a request to download an archive containing the XML representation of the given job.
+\item [Returns] An HTTP response with an output stream for the request archive on success. On failure, the response will contain an HTTP error code and a page with an error message.
+\item [Return Cookies] \
+	\begin{description}
+	\item [STATUS\_MESSAGE\_STRING] \type{String} On failure, contains an error message.
+	\end{description}
+\end{description}
+
+
+\section{Rerun Job Pairs}
+\begin{description}
+\item [URL] \servicesurl{services/jobs/rerunallpairs/\{id\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the job that contains the pairs to be rerun Method: POST
+\end{description}
+\item [Parameter Encoding] N/A
+\item [Description] Reruns every job pair in the given job. Returns: A jSON string containing a status object.
+\end{description}
+
+
+\section{Rerun Job Pairs of a Status}
+\begin{description}
+\item [URL] \servicesurl{services/jobs/rerunpairs/\{id\}/\{status\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the job that contains the pairs to be rerun
+	\item [status] \type{Integer} The integer status code of the pairs to rerun
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Reruns all job pairs that are both in the given job and have the given status code.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Rerun Job Pairs That Reported Incorrectly}
+\begin{description}
+\item [URL] \servicesurl{services/jobs/rerunpairs/\{id\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the job that contains the pairs to be rerun
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Reruns all job pairs that have already completed, but have a CPU time or wallclock time of 0. Such pairs generally had some problem reporting back results after completing.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Reprocess Job Pairs}
+\begin{description}
+\item [URL] \servicesurl{services/postprocess/job/\{jobId\}/\{procId\}/\{stageNumber\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [jobId] \type{Integer} The ID of the job to reprocess pairs in
+	\item [procId] \type{Integer} The ID of the post processor to use
+	\item [stageNumber] \type{Integer} Which stage of the job to reprocess. If the job did not use solver pipelines, this should always be 1.
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Runs a new post processor on all pairs from the job. The job must be finished to run a new post processor.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Pause Job}
+\begin{description}
+\item [URL] \servicesurl{services/pause/job/\{id\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the job to pause.
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Pauses the given job.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{Resume Job}
+\begin{description}
+\item [URL] \servicesurl{services/resume/job/\{id\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the job to resume.
+	\end{description}
+\item [Method] POST
+\item [Parameter Encoding] N/A
+\item [Description] Resumes the given paused job. Returns: A jSON string containing a status object.
+\end{description}
+
+
+\section{Change Job Queue}
+\begin{description}
+\item [URL] \servicesurl{services/changeQueue/job/\{id\}/\{queueid\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [id] \type{Integer} The ID of the job that is changing queues
+	\item [queueid] \type{Integer} The ID of the new queue to use Method: POST
+	\end{description}
+\item [Parameter Encoding] N/A
+\item [Description] Moves the job to a new queue, so that all subsequent job pairs will run on the new queue.
+\item [Returns] A jSON string containing a status object.
+\end{description}
+
+
+\section{View Qstat Output}
+\begin{description}
+\item [URL] \servicesurl{services/cluster/qstat}
+\item [Method] GET
+\item [Parameter Encoding] N/A
+\item [Description] Executes \texttt{qstat –f} on the Starexec grid engine and gets the standard output. Used to determine the cluster status.
+\item [Returns] A plaintext string containing the results of qstat.
+\end{description}
+
+
+\section{Delete Jobs}
+\begin{description}
+\item [URL] \servicesurl{services/delete/job}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [{selectedIds[]}] \type{Integer List} The list of job IDs to use
+	\end{description}
+\item [Description] Permanently deletes all of the given jobs, including the deletion of all job data on disk.
+\item [Returns] A jSON string containing a status object.
+\end{description}

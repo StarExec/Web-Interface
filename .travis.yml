@@ -4,3 +4,11 @@ addons:
     - texlive-full
 
 script: make CI
+
+deploy:
+  provider: releases
+  api_key:
+    secure: LsYnA/Ug5wxGsjSnYABlmuXkp349mgMqPPXcZiOAdurGvZx6gE80/lxNEXZDpqovRl6MoAlfbp5Jri0OXoYoGxkGPHR8ed2HiFbyO+RCfB7m6B3UFMupm7yu6YC9iN20irzB0GT7FdsHyIfUGSz+a5TJsI5JDOhgzJ7cnUNgLXn89cQixt1daGAwVs11Oat4ZygzxkWohKs1tOy/Lqn5ef9Dxwtkuwfz9m6kamavnVEKlN2mSN/LpivgNn1icHRdos60GPR8AAfqlJ7yqCHxVbFWPzjKpQWZhSz62xRNgTrGUes8xYsLUjQMpxOJ4jcI0y2jUoXN9ilQKQ/WyyIQEbzTSQgbvYRjFW6ySUWn9qjSmiti8kwm4h0VJqMkHPNY2LTgQmZjmGWY9pN5DwopS/TfWNDr89kln4SfQz3PeyOhugXZS7v4/RifZm4Nva/PuHnYvZ2nA58Z9/g/ZPqXe2v4xkmEOBN/7z9W8AAjfIzIm31nQGmfe1YQRNTYqpTZcDI/5RzQWtDBBckLaKEy3shwsTYEGV33mIFsZWn5+Iq6mUMgXos4Wd/OiNvUKi47hpw3SQWiXStjzDzzKQo8gUXUd8uVHITssUnBFDrW1pPJqpk+Pnju8n31Nh1K4Nl1Ifhv5Nf9GTgvGbDGns2DQI6+CMn+tjB5jF7Y4I0eFD4=
+  file: WebInterface.pdf
+  on:
+    repo: StarExec/Web-Interface

@@ -319,6 +319,20 @@
 \end{description}
 
 
+\section{View Queue Load}
+\begin{description}
+\item [URL] \servicesurl{services/cluster/loads/\{queueId\}}
+\item [URL Variables] \
+	\begin{description}
+	\item [queueId] \type{Integer} The ID of the queue to view.
+	\end{description}
+\item [Method] GET
+\item [Parameter Encoding] N/A
+\item [Description] Gets a representation of the LoadBalanceMonitor for the given queue.
+\item [Returns] A plaintext string that shows the load values for the given queue.
+\end{description}
+
+
 \section{Delete Jobs}
 \begin{description}
 \item [URL] \servicesurl{services/delete/job}

@@ -197,3 +197,17 @@
 \item [Description] Removes all the given spaces, including their full space hierarchies.
 \item [Returns] A jSON string containing a status object.
 \end{description}
+
+\section{Move Spaces}
+\begin{description}
+\item [URL] \servicesurl{services/move/space}
+\item [Method] POST
+\item [Parameter Encoding] application/x-www-form-urlencoded
+\item [Parameters] \
+	\begin{description}
+	\item [parent] \type{Integer} The ID of the parent space where the spaces will be moved to. Moved spaces will become subspaces of this space.
+	\item [{selectedIds[]}] \type{Integer List} The list of space IDs of spaces that will be moved.
+	\end{description}
+\item [Description] Moves all the given spaces, including their full space hierarchies, to the space represented by parent
+\item [Returns] A jSON string containing a status object.
+\end{description}
